@@ -2,41 +2,15 @@ package tp5a.exo2;
 
 
 import javax.swing.*;
+import javax.swing.text.html.HTML;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 
 
-// TypeListener class
-class TypeListener implements ActionListener {
-    private int type;
 
-    public TypeListener(int type) {
-        this.type = type;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        // Update elementType when an option in the menu is activated
-        SketcherFrame.elementType = type;
-    }
-}
-
-// ColorListener class
-class ColorListener implements ActionListener {
-    private Color color;
-
-    public ColorListener(Color color) {
-        this.color = color;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        // Update elementColor when a color option in the menu is activated
-        SketcherFrame.elementColor = color;
-    }
-}
 
 // SketcherFrame class
 public class SketcherFrame extends JFrame implements Constants {
@@ -44,8 +18,47 @@ public class SketcherFrame extends JFrame implements Constants {
     public static int elementType = DEFAULT_ELEMENT_TYPE;
     public static Color elementColor = DEFAULT_ELEMENT_COLOR;
 
+    public JTextArea textArea;
+
+        // TypeListener class
+    class TypeListener implements ActionListener {
+        private int type;
+        
+
+        public TypeListener(int type, JTextArea textArea) {
+            this.type = type;
+            textArea = textArea;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Update elementType when an option in the menu is activated
+            SketcherFrame.elementType = type;
+            textArea.append("Type selected: " + type + "\n");
+        }
+    }
+
+    // ColorListener class
+    class ColorListener implements ActionListener {
+        private Color color;
+
+        public ColorListener(Color color, JTextArea textArea) {
+            this.color = color;
+            textArea = textArea;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Update elementColor when a color option in the menu is activated
+            SketcherFrame.elementColor = color;
+            textArea.append("Color selected: " + color + "\n");
+        }
+    }
+
     public SketcherFrame() {
         super("Sketcher");
+        this.textArea = new JTextArea();
+        textArea.setEditable(false);
 
         // Create the menu bar
         JMenuBar menuBar = new JMenuBar();
@@ -63,10 +76,10 @@ public class SketcherFrame extends JFrame implements Constants {
         JRadioButtonMenuItem curveItem = new JRadioButtonMenuItem("Curve");
 
         // Add TypeListeners to radio buttons
-        lineItem.addActionListener(new TypeListener(LIGNE));
-        rectangleItem.addActionListener(new TypeListener(RECTANGLE));
-        circleItem.addActionListener(new TypeListener(CERCLE));
-        curveItem.addActionListener(new TypeListener(COURBE));
+        lineItem.addActionListener(new TypeListener(LIGNE, textArea));
+        rectangleItem.addActionListener(new TypeListener(RECTANGLE, textArea));
+        circleItem.addActionListener(new TypeListener(CERCLE, textArea));
+        curveItem.addActionListener(new TypeListener(COURBE, textArea));
 
         // Add radio buttons to Types submenu
         ButtonGroup typeGroup = new ButtonGroup();
@@ -100,10 +113,10 @@ public class SketcherFrame extends JFrame implements Constants {
         colorGroup.add(blueItem);
 
         // Add ColorListeners to check boxes
-        blackItem.addActionListener(new ColorListener(Color.BLACK));
-        redItem.addActionListener(new ColorListener(Color.RED));
-        greenItem.addActionListener(new ColorListener(Color.GREEN));
-        blueItem.addActionListener(new ColorListener(Color.BLUE));
+        blackItem.addActionListener(new ColorListener(Color.BLACK, textArea));
+        redItem.addActionListener(new ColorListener(Color.RED, textArea));
+        greenItem.addActionListener(new ColorListener(Color.GREEN, textArea));
+        blueItem.addActionListener(new ColorListener(Color.BLUE, textArea));
 
         // Add check boxes to Colors submenu
         colorsSubMenu.add(blackItem);
@@ -119,6 +132,8 @@ public class SketcherFrame extends JFrame implements Constants {
 
         // Set the menu bar for the frame
         setJMenuBar(menuBar);
+
+        add(new JScrollPane(textArea), BorderLayout.CENTER);
 
         // Set frame properties
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
