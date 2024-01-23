@@ -29,7 +29,7 @@ public class TryFlowLayout {
         }
         */
 
-        /* 3. */
+        /* 3 et 4. */
         frame.setLayout(new GridLayout(3, 4));
         
         for (int i=1; i <= 12; i++) {
