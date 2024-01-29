@@ -1,4 +1,5 @@
 package tb5b;
+
 // fichier Constants.java
 import java.awt.Color;
 
@@ -16,11 +17,11 @@ import java.awt.*;
 import java.awt.geom.*;
 
 public class SketcherFrame extends JFrame implements Constants {
-    private String title;
-    private Color elementColor = DEFAULT_ELEMENT_COLOR;
-    private int elementType = DEFAULT_ELEMENT_TYPE;
-    private SketcherModel model;
-    private SketcherFrame window;   
+    public String title;
+    public Color elementColor = DEFAULT_ELEMENT_COLOR;
+    public static int elementType = DEFAULT_ELEMENT_TYPE;
+    public SketcherModel model;
+    public SketcherFrame window;
 
     public SketcherFrame(String titre) {
         setTitle(titre);
@@ -31,31 +32,37 @@ public class SketcherFrame extends JFrame implements Constants {
     public SketcherFrame getWindow() {
         return window;
     }
+
     public SketcherModel getModel() {
         return model;
     }
+
     public void init() {
         window = new SketcherFrame("Dessin");
         Toolkit leKit = window.getToolkit();
         Dimension wndSize = leKit.getScreenSize();
-        window.setBounds(wndSize.width/4, wndSize.height/4,
-        wndSize.width/2, wndSize.height/2);
+        window.setBounds(wndSize.width / 4, wndSize.height / 4,
+                wndSize.width / 2, wndSize.height / 2);
         model = new SketcherModel();
         window.setVisible(true);
     }
-}
 
+    public static void main(String[] args) {
+        SketcherFrame frame = new SketcherFrame("My Title");
+        frame.init();
+    }
+}
 
 class SketcherModel {
-protected LinkedList ListeElements = new LinkedList();
+    protected LinkedList ListeElements = new LinkedList();
 
- public boolean remove(Element element) {
- boolean removed = ListeElements.remove(element);
-return removed;
- }
+    public boolean remove(Element element) {
+        boolean removed = ListeElements.remove(element);
+        return removed;
+    }
 
- public void add(Element element) {
- ListeElements.add(element);
-}
+    public void add(Element element) {
+        ListeElements.add(element);
+    }
 
 }
