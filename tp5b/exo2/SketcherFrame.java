@@ -14,6 +14,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseMotionAdapter;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
+
 // SketcherFrame class
 public class SketcherFrame extends JFrame implements Constants {
     // Members for elementType and elementColor
@@ -34,6 +39,21 @@ public class SketcherFrame extends JFrame implements Constants {
             System.out.println("Type selected: " + type);
         }
     }
+    class DrawableElement {
+        int type;
+        Color color;
+        Point start;
+        Point end;
+    
+        DrawableElement(int type, Color color, Point start, Point end) {
+            this.type = type;
+            this.color = color;
+            this.start = start;
+            this.end = end;
+        }
+    }
+    
+    List<DrawableElement> elements = new ArrayList<>();
 
     // ColorListener class
     class ColorListener implements ActionListener {
@@ -54,31 +74,39 @@ public class SketcherFrame extends JFrame implements Constants {
     public SketcherFrame() {
         super("Sketcher");
         this.drawPanel = new JPanel() {
+
+            private void drawElement(Graphics g, DrawableElement element) {
+                g.setColor(element.color);
+                switch (element.type) {
+                    case LIGNE:
+                        g.drawLine(element.start.x, element.start.y, element.end.x, element.end.y);
+                        break;
+                    case RECTANGLE:
+                        g.drawRect(Math.min(element.start.x, element.end.x), Math.min(element.start.y, element.end.y),
+                                Math.abs(element.start.x - element.end.x), Math.abs(element.start.y - element.end.y));
+                        break;
+                    case CERCLE:
+                        g.drawOval(Math.min(element.start.x, element.end.x), Math.min(element.start.y, element.end.y),
+                                Math.abs(element.start.x - element.end.x), Math.abs(element.start.y - element.end.y));
+                        break;
+                    case COURBE:
+                        g.drawArc(Math.min(element.start.x, element.end.x), Math.min(element.start.y, element.end.y),
+                                Math.abs(element.start.x - element.end.x), Math.abs(element.start.y - element.end.y), 0, 180);
+                        break;
+                }
+            }
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
+                for (DrawableElement element : elements) {
+                    drawElement(g, element);
+                }
                 if (startPoint != null && endPoint != null) {
-                    g.setColor(elementColor); // Set the color of the graphics to the selected color
-                    switch (elementType) {
-                        case LIGNE:
-                            g.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
-                            break;
-                        case RECTANGLE:
-                            g.drawRect(Math.min(startPoint.x, endPoint.x), Math.min(startPoint.y, endPoint.y),
-                                    Math.abs(startPoint.x - endPoint.x), Math.abs(startPoint.y - endPoint.y));
-                            break;
-                        case CERCLE:
-                            g.drawOval(Math.min(startPoint.x, endPoint.x), Math.min(startPoint.y, endPoint.y),
-                                    Math.abs(startPoint.x - endPoint.x), Math.abs(startPoint.y - endPoint.y));
-                            break;
-                        case COURBE:
-                            g.drawArc(Math.min(startPoint.x, endPoint.x), Math.min(startPoint.y, endPoint.y),
-                            Math.abs(startPoint.x - endPoint.x), Math.abs(startPoint.y - endPoint.y), 0, 180);
-                            break;
-                    }
+                    drawElement(g, new DrawableElement(elementType, elementColor, startPoint, endPoint));
                 }
             }
         };
+
         this.drawPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -87,13 +115,14 @@ public class SketcherFrame extends JFrame implements Constants {
 
             @Override
             public void mouseReleased(MouseEvent e) {
+                elements.add(new DrawableElement(elementType, elementColor, startPoint, endPoint));
                 startPoint = null;
                 endPoint = null;
                 drawPanel.repaint();
             }
         });
 
-        this.drawPanel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+        this.drawPanel.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
                 endPoint = e.getPoint();
