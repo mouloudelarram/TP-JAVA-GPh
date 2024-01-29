@@ -1,0 +1,11 @@
+
+
+public class Sketcher {
+    private SketcherModel model;
+    private SketcherFrame window;
+    private static Sketcher theApp;
+    public static void main(String[] args) {
+        theApp = new Sketcher();
+        theApp.init();
+    }
+}
