@@ -16,6 +16,7 @@ import java.awt.event.MouseMotionAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 
@@ -73,6 +74,47 @@ public class SketcherFrame extends JFrame implements Constants {
 
     public SketcherFrame() {
         super("Sketcher");
+
+         // Créer un nouveau JPanel avec un FlowLayout pour contenir les boutons
+         JPanel buttonPanel = new JPanel(new FlowLayout());
+
+         // Créer le bouton "Quitter"
+            JButton quitButton = new JButton("Quitter");
+         quitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Afficher une boîte de dialogue de confirmation avant de quitter
+                int response = JOptionPane.showConfirmDialog(null, "Voulez-vous vraiment quitter?", "Confirmation",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.YES_OPTION) {
+                    System.exit(0); // Quitter l'application
+                }
+            }
+        });
+ 
+         // Créer le bouton "Changer le couleur de la fenêtre"
+        JButton changeColorButton = new JButton("Changer le couleur de Frame");
+        Color[] colors = {Color.GREEN, Color.BLUE, Color.RED, Color.YELLOW, Color.ORANGE}; // Ajoutez plus de couleurs si vous le souhaitez
+        AtomicInteger colorIndex = new AtomicInteger(0); // Utilisez AtomicInteger pour le changement de thread-safe
+
+        changeColorButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Utiliser JColorChooser pour choisir la couleur
+                Color newColor = JColorChooser.showDialog(null, "Choisissez une couleur", drawPanel.getBackground());
+                if (newColor != null) {
+                    drawPanel.setBackground(newColor); // Changer la couleur de fond de la fenêtre
+                }
+            }
+        });
+ 
+         // Ajouter les boutons au JPanel
+         buttonPanel.add(quitButton);
+         buttonPanel.add(changeColorButton);
+ 
+         // Ajouter le JPanel à la fenêtre en position SOUTH
+         add(buttonPanel, BorderLayout.SOUTH);
+
         this.drawPanel = new JPanel() {
 
             private void drawElement(Graphics g, DrawableElement element) {
